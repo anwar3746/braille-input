@@ -1,0 +1,8 @@
+english-en
+french-fr
+hindi-hi
+kannada-kn
+malayalam-ml
+spanish-es
+tamil-ta
+numerical-en
