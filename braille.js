@@ -67,24 +67,20 @@ $( document ).ready(function(){
 
 		$.ajax({
         //This will retrieve the contents of the folder if the folder is configured as 'browsable'
-        url: 'braille/'+language,
+        url: 'braille/'+language+"/contraction_map_list.txt",
         success: function (data) {
-			$(data).find("a:contains(.txt)").each(function(){
-			var file = $(this).attr("href");
-
-
-			if (jQuery.inArray( file, ["beginning.txt","middle.txt","abbreviations.txt","abbreviations_default.txt","punctuations.txt","help.txt"]) < 0){	
-				if (simple_mode == 0){
+			var files = data.split("\n");
+			for (var i = 0, len = files.length; i < len; i++) {
+				if (files[i] != "" && simple_mode == 0){
 					submap_number += 1;
-					console.log("#########"+file.slice(0, -4));
-					append_sub_map(file,submap_number,language);
-					contractions_dict[file.slice(0, -4)] = submap_number-1;
+					console.log("#########"+files[i].slice(0, -4));
+					append_sub_map(files[i],submap_number,language);
+					contractions_dict[files[i].slice(0, -4)] = submap_number-1;
 				}			
 			}
 			
-			});
 			
-        }, async:false })
+        }, async:false });
         
         
         for(var key in map) {
