@@ -285,6 +285,28 @@ $( document ).ready(function(){
 				event.preventDefault();
 			}
 			
+			if(items == "9")
+			{
+				var textAreaTxt = $(this).val();
+				var iCaretPos = getCursorPosition("brailletextarea");
+				var left = textAreaTxt.slice(0,iCaretPos-1);
+				var right = textAreaTxt.slice(iCaretPos,(textAreaTxt.length));
+				$(this).val(left+right)
+				setCaretPosition("brailletextarea",iCaretPos-1);
+			}
+
+			if(items == "89")
+			{
+				var textAreaTxt = $(this).val();
+				var iCaretPos = getCursorPosition("brailletextarea");
+				var words = textAreaTxt.slice(0,iCaretPos).split(" ");
+				var last_word = words.slice(-1)[0];
+				var left = textAreaTxt.slice(0,iCaretPos-(last_word.length));
+				var right = textAreaTxt.slice(iCaretPos,(textAreaTxt.length));
+				$(this).val(left+right)
+				setCaretPosition("brailletextarea",iCaretPos-(last_word.length));
+			}
+
 			//Abbreviation expansion 
 			if (items == "7" && simple_mode == 0)
 			{
