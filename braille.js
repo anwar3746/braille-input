@@ -35,6 +35,12 @@ $( document ).ready(function(){
 	
 	//Contraction dict 
 	var contractions_dict = {};
+	
+	//Abbreviations dict
+	var abbreviations = {};
+	
+	//Simple Mode
+	var simple_mode = 0;
 
 	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - Swich between lists
 	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0"}
@@ -49,7 +55,7 @@ $( document ).ready(function(){
 		map = {};
 		contractions_dict = {};
 		
-		var simple_mode = 0;
+		simple_mode = 0;
 		
 		var submap_number = 1;
 		append_sub_map("beginning.txt",submap_number,language);
@@ -66,7 +72,6 @@ $( document ).ready(function(){
 
 
 		$.ajax({
-        //This will retrieve the contents of the folder if the folder is configured as 'browsable'
         url: 'braille/'+language+"/contraction_map_list.txt",
         success: function (data) {
 			var files = data.split("\n");
@@ -89,8 +94,12 @@ $( document ).ready(function(){
 		}	
         
         //Load abbreviations if exist
-		//######################load_abbrivation();
-        
+		load_abbrivation(language);
+
+        for(var key in abbreviations) {
+			var value = map[key];
+			console.log(key,value); 
+		}        
         
 	}
 
@@ -142,20 +151,22 @@ $( document ).ready(function(){
 		}
 	}	
 			
-			
-		
 
-/*
-
-	function load_abbrivation(language):
+	function load_abbrivation(language){
 		abbreviations = {}
-		try:
-			for line in open("%s/braille/%s/abbreviations.txt"%(data_dir,language),mode='r'):
-				self.abbreviations[line.split("  ")[0]] = line.split("  ")[1][:-1]
-		except FileNotFoundError:
-			pass
-
-*/
+		jQuery.ajax({
+		url : "/braille-input/braille/"+language+"/abbreviations.txt",
+		success : function (data){
+			var lines = data.split("\n");
+			for (var i = 0, len = lines.length; i < len; i++) {
+				//save(lines[i]);
+				if (lines[i] != ""){
+					console.log(lines[i].split("  "));
+					abbreviations[lines[i].split("  ")[0]] = lines[i].split("  ")[1]; }
+				}
+			}
+		});
+	}
 
 
 	
@@ -172,6 +183,59 @@ $( document ).ready(function(){
 		}
 		
     });
+    
+    function insertAtCaret(areaId,text) {
+		var txtarea = document.getElementById(areaId);
+		var scrollPos = txtarea.scrollTop;
+		var strPos = 0;
+		var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ? 
+			"ff" : (document.selection ? "ie" : false ) );
+		if (br == "ie") { 
+			txtarea.focus();
+			var range = document.selection.createRange();
+			range.moveStart ('character', -txtarea.value.length);
+			strPos = range.text.length;
+		}
+		else if (br == "ff") strPos = txtarea.selectionStart;
+
+		var front = (txtarea.value).substring(0,strPos);  
+		var back = (txtarea.value).substring(strPos,txtarea.value.length); 
+		txtarea.value=front+text+back;
+		strPos = strPos + text.length;
+		if (br == "ie") { 
+			txtarea.focus();
+			var range = document.selection.createRange();
+			range.moveStart ('character', -txtarea.value.length);
+			range.moveStart ('character', strPos);
+			range.moveEnd ('character', 0);
+			range.select();
+		}
+		else if (br == "ff") {
+			txtarea.selectionStart = strPos;
+			txtarea.selectionEnd = strPos;
+			txtarea.focus();
+		}
+		txtarea.scrollTop = scrollPos;
+	}
+    
+
+    function getCursorPosition(areaId) {
+        var input = document.getElementById(areaId);
+        if (!input) return; // No (input) element found
+        if ('selectionStart' in input) {
+            // Standard-compliant browsers
+            return input.selectionStart;
+        } else if (document.selection) {
+            // IE
+            input.focus();
+            var sel = document.selection.createRange();
+            var selLen = document.selection.createRange().text.length;
+            sel.moveStart('character', -input.value.length);
+            return sel.text.length - selLen;
+        }
+    }
+
+    
     
     function case_insensitive_comp(strA, strB) 
     {
@@ -200,12 +264,37 @@ $( document ).ready(function(){
 				event.preventDefault();
 			}
 			
+			//Abbreviation expansion 
+			if (items == "7" && simple_mode == 0)
+			{
+				try
+				{
+					var textAreaTxt = $(this).val();
+					var iCaretPos = getCursorPosition("brailletextarea");
+					var words = textAreaTxt.slice(0,iCaretPos).split(" ");
+					var last_word = words.slice(-1)[0];
+					
+					console.log(abbreviations+last_word);
+					if (abbreviations[last_word])
+					{
+						console.log(items,abbreviations[last_word]);
+						insertAtCaret("brailletextarea",abbreviations[last_word])
+						braille_letter_map_pos = 1;
+					}
+				}catch(e)
+				{
+					console.log(e);
+
+				}
+			}
+			
+			
 			try
 			{
 				if (map[items][braille_letter_map_pos])
 				{
 					console.log(items,map[items][braille_letter_map_pos]);
-					$(this).val($(this).val()+map[items][braille_letter_map_pos]);
+					insertAtCaret("brailletextarea",map[items][braille_letter_map_pos])
 					braille_letter_map_pos = 1;
 				}
 			}catch(e)
