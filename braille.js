@@ -235,6 +235,27 @@ $( document ).ready(function(){
         }
     }
 
+
+	function setCaretPosition(elemId, caretPos) {
+		var elem = document.getElementById(elemId);
+
+		if(elem != null) {
+			if(elem.createTextRange) {
+				var range = elem.createTextRange();
+				range.move('character', caretPos);
+				range.select();
+			}
+			else {
+				if(elem.selectionStart) {
+					elem.focus();
+					elem.setSelectionRange(caretPos, caretPos);
+				}
+				else
+					elem.focus();
+			}
+		}
+	}    
+
     
     
     function case_insensitive_comp(strA, strB) 
@@ -277,8 +298,18 @@ $( document ).ready(function(){
 					console.log(abbreviations+last_word);
 					if (abbreviations[last_word])
 					{
-						console.log(items,abbreviations[last_word]);
-						insertAtCaret("brailletextarea",abbreviations[last_word])
+						console.log(items,abbreviations[last_word]);						
+						
+						var left = textAreaTxt.slice(0,iCaretPos-(last_word.length));
+						var right = textAreaTxt.slice(iCaretPos,(textAreaTxt.length));
+						$(this).val(left+abbreviations[last_word]+right)
+						if(right.length > 0)
+							setCaretPosition("brailletextarea",iCaretPos+(abbreviations[last_word].length-1));
+						else
+							setCaretPosition("brailletextarea",iCaretPos+(abbreviations[last_word].length));
+						
+						
+						setCaretPosition
 						braille_letter_map_pos = 1;
 					}
 				}catch(e)
