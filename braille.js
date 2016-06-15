@@ -45,17 +45,23 @@ $( document ).ready(function(){
 	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - Swich between lists
 	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0",59:"0"}
 	
-	var braille_letter_map_pos = 0;
-	load_language("english");
+	var cur_language = "english";
 	
+	var braille_letter_map_pos = 0;
+	load_language(cur_language);
+
+	//Simple Mode Checkbox
+	$('#isSimpleMode').click(function() {
+		simple_mode = (this.checked);
+		load_language(cur_language);
+	});	
 	
 	
 	function load_language(language){
 		console.log("loading Map for language : %s" + language)
+		cur_language = language;
 		map = {};
 		contractions_dict = {};
-		
-		simple_mode = 0;
 		
 		var submap_number = 1;
 		append_sub_map("beginning.txt",submap_number,language);
@@ -66,41 +72,37 @@ $( document ).ready(function(){
 		submap_number = 3;
 		append_sub_map("punctuations.txt",submap_number,language);
 		
+		
+		if (simple_mode == 0)
+		{
+			$.ajax({
+			url: 'braille/'+language+"/contraction_map_list.txt",
+			success: function (data) {
+				var files = data.split("\n");
+				for (var i = 0, len = files.length; i < len; i++) {
+					if (files[i] != "" && simple_mode == 0){
+						submap_number += 1;
+						console.log("#########"+files[i].slice(0, -4));
+						append_sub_map(files[i],submap_number,language);
+						contractions_dict[files[i].slice(0, -4)] = submap_number-1;
+					}			
+				}
+				
+			}, async:false }); 
+			
+        
+			//Load abbreviations if exist
+			load_abbrivation(language);
 
-
-
-
-
-		$.ajax({
-        url: 'braille/'+language+"/contraction_map_list.txt",
-        success: function (data) {
-			var files = data.split("\n");
-			for (var i = 0, len = files.length; i < len; i++) {
-				if (files[i] != "" && simple_mode == 0){
-					submap_number += 1;
-					console.log("#########"+files[i].slice(0, -4));
-					append_sub_map(files[i],submap_number,language);
-					contractions_dict[files[i].slice(0, -4)] = submap_number-1;
-				}			
+			for(var key in abbreviations) {
+				var value = map[key];
+				console.log(key,value); 
 			}
-			
-			
-        }, async:false });
-        
-        
+		}
         for(var key in map) {
 			var value = map[key];
-			console.log(key,value); 
-		}	
-        
-        //Load abbreviations if exist
-		load_abbrivation(language);
-
-        for(var key in abbreviations) {
-			var value = map[key];
-			console.log(key,value); 
-		}        
-        
+			console.log(key,value);
+		}
 	}
 
 
