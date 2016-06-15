@@ -43,7 +43,7 @@ $( document ).ready(function(){
 	var simple_mode = 0;
 
 	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - Swich between lists
-	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0"}
+	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0",59:"0"}
 	
 	var braille_letter_map_pos = 0;
 	load_language("english");
