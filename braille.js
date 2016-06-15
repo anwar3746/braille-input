@@ -140,14 +140,12 @@ $( document ).ready(function(){
 		
 		
 		//Fill blank if empty 
-		for (var i=0; i<Object.keys(map).length; i++) {
-			if ( map[i] )
+		for(var key in map) {
+			var value = map[key];
+			if(value.length < submap_number)
 			{
-				if (Object.keys(map[i]).length < submap_number)
-				{
-					map[i].push("");
-				}
-			}
+				map[key].push("");
+			}			 
 		}
 	}	
 			
