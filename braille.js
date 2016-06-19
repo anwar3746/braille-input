@@ -42,18 +42,25 @@ $( document ).ready(function(){
 	//Simple Mode
 	var simple_mode = 0;
 
-	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - Swich between lists
-	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0",59:"0"}
+	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - punctuation -1 - Swich between lists
+	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0",59:"0",18:"-1"}
 	
 	var cur_language = "english";
 	
 	var braille_letter_map_pos = 0;
 	load_language(cur_language);
+	
+	var caps_lock = false;
 
 	//Simple Mode Checkbox
 	$('#isSimpleMode').click(function() {
 		simple_mode = (this.checked);
 		load_language(cur_language);
+	});	
+
+	//Capital Mode Checkbox
+	$('#isCapsLock').click(function() {
+		caps_lock = (this.checked);
 	});	
 	
 	
@@ -279,10 +286,27 @@ $( document ).ready(function(){
 			}
 			
 			
+			if (items == "-1")
+			{
+				if (braille_letter_map_pos != 0)
+					braille_letter_map_pos = 0;
+				else
+					braille_letter_map_pos = 1;
+				
+				console.log(braille_letter_map_pos);
+			}
 			if (items == "0")
 			{
 				braille_letter_map_pos = 2;
 				event.preventDefault();
+			}
+			
+			if (items == "8")
+			{
+				console.log(!caps_lock);
+				caps_lock = !caps_lock;
+				$('#isCapsLock').prop('checked', caps_lock);
+				
 			}
 			
 			if(items == "9")
@@ -318,13 +342,18 @@ $( document ).ready(function(){
 					var last_word = words.slice(-1)[0];
 					
 					console.log(abbreviations+last_word);
-					if (abbreviations[last_word])
+					if (abbreviations[last_word.toLowerCase()])
 					{
 						console.log(items,abbreviations[last_word]);						
 						
 						var left = textAreaTxt.slice(0,iCaretPos-(last_word.length));
 						var right = textAreaTxt.slice(iCaretPos,(textAreaTxt.length));
-						$(this).val(left+abbreviations[last_word]+right)
+						
+						if(caps_lock)
+							$(this).val(left+abbreviations[last_word.toLowerCase()].toUpperCase()+right)
+						else
+							$(this).val(left+abbreviations[last_word]+right)
+						
 						if(right.length > 0)
 							setCaretPosition("brailletextarea",iCaretPos+(abbreviations[last_word].length-1));
 						else
@@ -347,7 +376,10 @@ $( document ).ready(function(){
 				if (map[items][braille_letter_map_pos])
 				{
 					console.log(items,map[items][braille_letter_map_pos]);
-					insertAtCaret("brailletextarea",map[items][braille_letter_map_pos])
+					if(caps_lock)
+						insertAtCaret("brailletextarea",map[items][braille_letter_map_pos].toUpperCase());
+					else
+						insertAtCaret("brailletextarea",map[items][braille_letter_map_pos]);
 					braille_letter_map_pos = 1;
 				}
 			}catch(e)
