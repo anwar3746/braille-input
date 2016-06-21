@@ -1,3 +1,10 @@
+//Simple Mode
+var simple_mode = 0;
+
+var caps_lock = 0;
+
+var language_no = 0;
+
 	
 $( document ).ready(function(){
 	
@@ -27,7 +34,7 @@ $( document ).ready(function(){
     $('#braillelanguage').change(function() {
 		language = $(this).val().split('-')[0];
 		load_language(language)
-			
+		language_no = $('option:selected',$(this)).index();
 	});
 	
 	// The map used for transilation
@@ -39,19 +46,38 @@ $( document ).ready(function(){
 	//Abbreviations dict
 	var abbreviations = {};
 	
-	//Simple Mode
-	var simple_mode = 0;
+	simple_mode = $.jStorage.get("braille-input-tool-simple-mode");
+	caps_lock = $.jStorage.get("braille-input-tool-caps-lock");
+	language_no = $.jStorage.get("braille-input-tool-language");
+	
+	$('#isSimpleMode').prop('checked', simple_mode);
+	$('#isCapsLock').prop('checked', caps_lock);
+	
+	if(language_no == null)
+		language_no = 0;
+	
+	console.log("###SIMPLE MODE = ",simple_mode);
+	console.log("###Caps Lock = ",caps_lock);
+	console.log("###Language = ",language_no);
+	
+
 
 	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - punctuation -1 - Swich between lists
-	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0",59:"0",18:"-1"}
+	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0",59:"0",18:"-1"};
+		
+	var braille_letter_map_pos = 0;
 	
+	
+
 	var cur_language = "english";
 	
-	var braille_letter_map_pos = 0;
-	load_language(cur_language);
-	
-	var caps_lock = false;
+	console.log("HRRRRR : "+$('#braillelanguage' ));
 
+	
+	console.log(cur_language);
+	load_language(cur_language);
+
+	
 	//Simple Mode Checkbox
 	$('#isSimpleMode').click(function() {
 		simple_mode = (this.checked);
@@ -397,5 +423,12 @@ $( document ).ready(function(){
 		}
 		//event.preventDefault();
     });
+});
+
+
+$( window ).unload(function(){
+    $.jStorage.set("braille-input-tool-caps-lock",caps_lock);
+    $.jStorage.set("braille-input-tool-simple-mode",simple_mode);
+    $.jStorage.set("braille-input-tool-language",language_no);
 });
 
