@@ -60,7 +60,11 @@ $( document ).ready(function(){
 	
 	if(language_no == null)
 		language_no = 0;
-	
+	if(simple_mode == null)
+		simple_mode = 0;
+	if(caps_lock == null)
+		caps_lock = 0;
+
 	console.log("###SIMPLE MODE = ",simple_mode);
 	console.log("###Caps Lock = ",caps_lock);
 	console.log("###Language = ",language_no);
@@ -73,13 +77,15 @@ $( document ).ready(function(){
 	var braille_letter_map_pos = 0;
 	
 	$('#braillelanguage option')[language_no].selected = true;
-	$('#braillelanguage option').change();
+	var language = $('#braillelanguage').val().split('-')[0];
+	load_language(language)
 
 	
 	//Simple Mode Checkbox
 	$('#isSimpleMode').click(function() {
 		simple_mode = (this.checked);
-		$('#braillelanguage option').change();
+		var language = $('#braillelanguage').val().split('-')[0];
+		load_language(language)
 	});	
 
 	//Capital Mode Checkbox
