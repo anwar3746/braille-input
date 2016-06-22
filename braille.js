@@ -28,7 +28,12 @@ $( document ).ready(function(){
 			}
 		}
 	}
-    $.get("/braille-input/braille/languages.txt",parseData);
+
+    $.ajax({ url: "/braille-input/braille/languages.txt",
+			success: parseData,
+			async: false });
+
+
     
     //Connecting combobox handler
     $('#braillelanguage').change(function() {
@@ -67,21 +72,14 @@ $( document ).ready(function(){
 		
 	var braille_letter_map_pos = 0;
 	
-	
-
-	var cur_language = "english";
-	
-	console.log("HRRRRR : "+$('#braillelanguage' ));
-
-	
-	console.log(cur_language);
-	load_language(cur_language);
+	$('#braillelanguage option')[language_no].selected = true;
+	$('#braillelanguage option').change();
 
 	
 	//Simple Mode Checkbox
 	$('#isSimpleMode').click(function() {
 		simple_mode = (this.checked);
-		load_language(cur_language);
+		$('#braillelanguage option').change();
 	});	
 
 	//Capital Mode Checkbox
@@ -92,7 +90,6 @@ $( document ).ready(function(){
 	
 	function load_language(language){
 		console.log("loading Map for language : %s" + language)
-		cur_language = language;
 		map = {};
 		contractions_dict = {};
 		
