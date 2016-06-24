@@ -13,7 +13,39 @@
 	 <br> Simple Mode <input type="checkbox" id="isSimpleMode"/>
 	 <br> Capital Mode <input type="checkbox" id="isCapsLock"/>
 	 <br>
-     <textarea id="brailletextarea" cols=60 rows=30 type="textarea"> </textarea>
+     <textarea id="brailletextarea" cols=60 rows=30 type="textarea" style="width:100%" > </textarea>
+
+    <button id="configure_button">Configure Keys</button>
+	<table id="configure_table" style="width:100%">
+	<tr>
+		<td>Dot 1</td><td><input id="key1"></input></td>
+		<td>Dot 4</td><td><input id="key4"></input></td>
+	</tr>
+	<tr>
+		<td>Dot 2</td><td><input id="key2"></input></td>
+		<td>Dot 5</td><td><input id="key5"></input></td>
+	</tr>
+	<tr>
+		<td>Dot 3</td><td><input id="key3"></input></td>
+		<td>Dot 6</td><td><input id="key6"></input></td>
+	</tr>
+	<tr>
+		<td>Abbreviation </td><td><input id="key7"></input></td>
+		<td>Punctuatin </td><td><input id="key0"></input></td>
+	</tr>
+	<tr>
+		<td>Letter Deletion </td><td><input id="key9"></input></td>
+		<td>Capital Toggle </td><td><input id="key8"></input></td>
+	</tr>
+	<tr>
+		<td>Switch Between Map </td><td><input id="key-1"></input></td>
+		<td><button id="reset_button"> Reset to default </button></td>
+		<td><button id="close_button"> Close </button></td>
+	</tr>
+	</table>
+
+
  </body>
+<script src="keymap.js">  </script>
 <script src="braille.js">  </script>
 </html> 

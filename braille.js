@@ -5,6 +5,8 @@ var caps_lock = 0;
 
 var language_no = 0;
 
+var keycode_map;
+
 	
 $( document ).ready(function(){
 	
@@ -41,6 +43,60 @@ $( document ).ready(function(){
 		load_language(language)
 		language_no = $('option:selected',$(this)).index();
 	});
+
+	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - punctuation -1 - Swich between lists
+	keycode_map = $.jStorage.get("braille-input-tool-keycode-map");
+	if(keycode_map == null)
+		keycode_map = {"1":"70","2":"68","3":"83","4":"74","5":"75","6":"76","7":"65","8":"71","9":"72","0":"186","0":"59","-1":"18"};
+
+	$("#configure_button").click(function(){
+		$("#configure_table").show(100);
+		$("#configure_button").hide(100);
+
+		$.each(keycode_map, function(key, val){
+			console.log("Value = "+val+"Key = "+key);
+			$("#key"+key).val(keyboardMap[val]);
+			$("#key"+key).keydown(function(event){
+					event.preventDefault();
+					console.log("This is from : "+val+" Pressed = "+keyboardMap[event.keyCode]+" Key code : "+event.keyCode);
+
+					// Check the pressed key is same
+					if (event.keyCode != keycode_map[key])
+					{
+								//Check the key is used by other
+								var exist_flag = 0;
+								$.each(keycode_map, function(key, val){
+									if(val == event.keyCode){
+										console.log("Other Exist");
+										$(this).val("None");
+										exist_flag = 1;
+									}
+								});
+
+								if(exist_flag == 0){
+									keycode_map[key] = event.keyCode;
+									$(this).val(keyboardMap[event.keyCode]);
+								}
+					}
+				});
+
+			});
+
+
+
+	});
+	$("#close_button").click(function(){
+		$("#configure_table").hide(100);
+		$("#configure_button").show(100);
+	});
+
+	$("#reset_button").click(function(){
+		keycode_map = {"1":"70","2":"68","3":"83","4":"74","5":"75","6":"76","7":"65","8":"71","9":"72","0":"186","0":"59","-1":"18"};
+		$("#configure_table").hide(100);
+		$("#configure_button").show(100);
+	});
+
+	$("#configure_table").hide();
 	
 	// The map used for transilation
 	var map = {};
@@ -64,15 +120,6 @@ $( document ).ready(function(){
 		simple_mode = 0;
 	if(caps_lock == null)
 		caps_lock = 0;
-
-	console.log("###SIMPLE MODE = ",simple_mode);
-	console.log("###Caps Lock = ",caps_lock);
-	console.log("###Language = ",language_no);
-	
-
-
-	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - punctuation -1 - Swich between lists
-	var keycode_map = {70:"1",68:"2",83:"3",74:"4",75:"5",76:"6",65:"7",71:"8",72:"9",186:"0",59:"0",18:"-1"};
 		
 	var braille_letter_map_pos = 0;
 	
@@ -211,13 +258,12 @@ $( document ).ready(function(){
     var items = "";
     $('#brailletextarea').keydown(function(event)
     {
-		console.log(Object.keys(keycode_map),event.keyCode.toString());
-		if($.inArray(event.keyCode.toString(),Object.keys(keycode_map)) >= 0)
-		{
-			items=items+keycode_map[event.keyCode];
-			event.preventDefault();
-		}
-		
+		$.each(keycode_map, function(key, val){
+			if(val == event.keyCode){
+				items=items+key;
+				event.preventDefault();
+				}
+		});
     });
     
     function insertAtCaret(areaId,text) {
@@ -433,5 +479,6 @@ $( window ).unload(function(){
     $.jStorage.set("braille-input-tool-caps-lock",caps_lock);
     $.jStorage.set("braille-input-tool-simple-mode",simple_mode);
     $.jStorage.set("braille-input-tool-language",language_no);
+    $.jStorage.set("braille-input-tool-keycode-map",keycode_map);
 });
 
