@@ -57,6 +57,8 @@ $( document ).ready(function(){
 			console.log("Value = "+val+"Key = "+key);
 			$("#key"+key).val(keyboardMap[val]);
 			$("#key"+key).keydown(function(event){
+					if (keyboardMap[event.keyCode] == "TAB" || keyboardMap[event.keyCode] == "SHIFT" )
+						return;
 					event.preventDefault();
 					console.log("This is from : "+val+" Pressed = "+keyboardMap[event.keyCode]+" Key code : "+event.keyCode);
 
@@ -68,7 +70,7 @@ $( document ).ready(function(){
 								$.each(keycode_map, function(key, val){
 									if(val == event.keyCode){
 										console.log("Other Exist");
-										$(this).val("None");
+										$(this).val("NONE");
 										exist_flag = 1;
 									}
 								});
