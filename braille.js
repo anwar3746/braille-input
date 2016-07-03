@@ -44,6 +44,18 @@ $( document ).ready(function(){
 		language_no = $('option:selected',$(this)).index();
 	});
 
+	$("#save_button").click( function() {
+		var text = $("#brailletextarea").val();
+		var filename = prompt("Enter the filename","");
+		var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, filename+".txt");
+	});
+	$("#new_button").click( function() {
+		if (confirm("Deleting all text! Are you sure ?"))
+			$("#brailletextarea").val("");
+	});
+
+
 	// 7 - Abbreviation key   8 - Captitol/Chill   9 - Letter Deletion 0 - punctuation -1 - Swich between lists
 	keycode_map = $.jStorage.get("braille-input-tool-keycode-map");
 	if(keycode_map == null)
