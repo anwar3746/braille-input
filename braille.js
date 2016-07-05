@@ -7,6 +7,13 @@ var language_no = 0;
 
 var keycode_map;
 
+var background_color;
+
+var font_color;
+
+var font_size = 20;
+
+
 	
 $( document ).ready(function(){
 	
@@ -53,6 +60,34 @@ $( document ).ready(function(){
 	$("#new_button").click( function() {
 		if (confirm("Deleting all text! Are you sure ?"))
 			$("#brailletextarea").val("");
+	});
+
+	var combo = document.getElementById("fontsize");
+    for (var i = 6; i < 98; i++) {
+		var option = document.createElement("option");
+		option.text = i
+		option.value = i
+		try {
+			combo.add(option, null); //Standard
+			}catch(error) {
+				combo.add(option); // IE only
+			}
+	}
+
+
+	$('#backgroundcolor').change(function(){
+		background_color = $(this).val()
+		$("#brailletextarea").css({'background-color':background_color});
+	});
+
+	$('#foregroundcolor').change(function(){
+		font_color = $(this).val()
+		$("#brailletextarea").css({'color':font_color});
+	});
+
+	$('#fontsize').change(function(){
+		font_size = $('option:selected',$(this)).index();
+		$("#brailletextarea").css({'font-size':$(this).val()});
 	});
 
 
@@ -124,6 +159,9 @@ $( document ).ready(function(){
 	simple_mode = $.jStorage.get("braille-input-tool-simple-mode");
 	caps_lock = $.jStorage.get("braille-input-tool-caps-lock");
 	language_no = $.jStorage.get("braille-input-tool-language");
+	font_color = $.jStorage.get("braille-input-tool-font-color");
+	font_size = $.jStorage.get("braille-input-tool-font-size");
+	background_color = $.jStorage.get("braille-input-tool-background-color");
 	
 	$('#isSimpleMode').prop('checked', simple_mode);
 	$('#isCapsLock').prop('checked', caps_lock);
@@ -134,7 +172,21 @@ $( document ).ready(function(){
 		simple_mode = 0;
 	if(caps_lock == null)
 		caps_lock = 0;
-		
+	if(background_color == null)
+		background_color = "White";
+	if(font_color == null)
+		font_color = "Black";
+
+	$('#backgroundcolor').val(background_color);
+	$("#brailletextarea").css({'background-color':background_color});
+	$('#foregroundcolor').val(font_color);
+	$("#brailletextarea").css({'color':font_color});
+
+	if(font_size != null){
+		$('#fontsize option')[font_size].selected = true;
+		var fs = $('#fontsize').val();
+		$("#brailletextarea").css({'font-size':fs});
+	}
 	var braille_letter_map_pos = 0;
 	
 	$('#braillelanguage option')[language_no].selected = true;
@@ -494,5 +546,8 @@ $( window ).unload(function(){
     $.jStorage.set("braille-input-tool-simple-mode",simple_mode);
     $.jStorage.set("braille-input-tool-language",language_no);
     $.jStorage.set("braille-input-tool-keycode-map",keycode_map);
+    $.jStorage.set("braille-input-tool-font-color",font_color);
+    $.jStorage.set("braille-input-tool-font-size",font_size);
+    $.jStorage.set("braille-input-tool-background-color",background_color);
 });
 
