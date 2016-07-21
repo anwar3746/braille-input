@@ -12,11 +12,14 @@
  <body>
 	 Language 
 	 <select name="Language" id="braillelanguage">  Select the language </select>
-	 <br> Simple Mode <input type="checkbox" id="isSimpleMode"/>
-	 <br> Capital Mode <input type="checkbox" id="isCapsLock"/>
+	 <br> <textarea id="brailletextarea" cols=60 rows=30 type="textarea" style="width:100%" > </textarea>
 	 <br>
-	 <button id="new_button">New</button>
 	 <button id="save_button">Save</button>
+	 <button id="new_button">New</button>
+
+	 Simple Mode <input type="checkbox" id="isSimpleMode"/>
+	 Capital Mode <input type="checkbox" id="isCapsLock"/>
+
      Font Size<select id="fontsize"></select>
 
      Fore Color<select name="foreground" id="foregroundcolor">
@@ -64,8 +67,6 @@
 	 <option value="White">White</option>
 	 <option value="Yellow">Yellow</option>
      </select>
-	 <br>
-     <textarea id="brailletextarea" cols=60 rows=30 type="textarea" style="width:100%" > </textarea>
 
     <button id="configure_button">Configure Keys</button>
 	<table id="configure_table" style="width:100%">
